@@ -2,13 +2,14 @@ provider "aws" {
   region = "us-east-1"
 }
 
+# Creates an Ubuntu based EC2 instance
 resource "aws_instance" "test" {
   ami           = "ami-0261755bbcb8c4a84"
   instance_type = "t2.micro"
 
   user_data = <<-EOF
               #!/bin/bash
-              echo "Demo for CMPE 279 Project with external tf state storage! - local State!" > index.html
+              echo "Demo for CMPE 279 Project with external tf state storage! - Take3" > index.html
               nohup busybox httpd -f -p 8080 &
               EOF
 
@@ -19,6 +20,7 @@ resource "aws_instance" "test" {
   }
 }
 
+# Creates a Security Group opening port 8080
 resource "aws_security_group" "sg1" {
   name = "cmpe279-demo-2-sg"
 
@@ -30,10 +32,11 @@ resource "aws_security_group" "sg1" {
   }
 }
 
+#Code Block for storing and managing the state file using S3 & DynamoDB
 terraform {
   backend "s3" {
     bucket = "cmpe279-demo-tf-state"
-    key    = "global/s3/terraform.tfstate"
+    key    = "demo2/terraform.tfstate"
     region = "us-east-1"
 
     dynamodb_table = "tf-cmpe279-project-state-locks"
